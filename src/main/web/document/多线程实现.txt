@@ -1,0 +1,72 @@
+public void updateHL(){
+    final long timeInterval = 10000*60*60*24;
+    Runnable runnable = new Runnable() {
+        public void run(){
+            while(true){
+                try{
+                    System.out.print("test");
+                    Thread.sleep(timeInterval);
+                } catch (Exception e){
+                    logger.debug(e.getMessage());
+                }
+            }
+        }
+    };
+    Thread thread = new Thread(runnable);
+    thread.start();
+}
+
+
+在java中可有两种方式实现多线程，一种是继承Thread类，一种是实现Runnable接口。
+通常采用Runnable接口方式。
+
+都是通过其中run()方法实现多线程效果；
+Thread类中有start()调用其中的run()方法,Runnable子类中没有start()方法，因此通过Thread的构造方法将runnable赋值给Thread，再通过Thread的start()方法调用run().
+
+http://developer.51cto.com/art/201203/321042.htm
+http://www.cnblogs.com/riskyer/p/3263032.html
+
+
+
+项目中推荐使用Executor执行线程：
+
+java.util.concurrent
+
+Executors(C):
+public static ExecutorService newCachedThreadPool()
+public static ExecutorService newFixedThreadPool(int nThreads)
+public static ExecutorService newSingleThreadExecutor()
+
+ExecutorService(I):
+    ExecutorService.execute();
+    ExecutorService.shutdown();
+    ExecutorService.shutdownNow();
+    void execute(Runnable command);
+    Future<?> submit(Runnable task);
+    Future<T> submit(Callable<T> task);
+
+ThreadPoolExecutor(C) implements ExecutorService[不推荐]:
+    ThreadPoolExecutor executor = new ThreadPoolExecutor(2, 5, 300, TimeUnit.SECONDS, 
+		new ArrayBlockingQueue<Runnable>(5));
+http://hubingforever.blog.163.com/blog/static/1710405792010964339151/
+
+
+
+org.springframework.scheduling.concurrent
+ThreadPoolTaskExecutor(C) implements TaskExecutor:
+    ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+    executor.setCorePoolSize(2);
+    executor.setQueueCapacity(5);
+    executor.setMaxPoolSize(5);
+    executor.setKeepAliveSeconds(300);
+    executor.initialize();
+
+    executor.execute(runnable);
+    executor.submit(runnable);
+    executor.submit(callable);
+http://www.cnblogs.com/crazylqy/p/4220743.html
+
+
+
+Callable
+http://blog.csdn.net/ghsau/article/details/7451464

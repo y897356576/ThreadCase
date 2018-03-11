@@ -1,0 +1,83 @@
+ThreadPoolTaskExecutor初始化时，赋完值后需要调用ThreadPoolTaskExecutor的initialize()方法；
+
+
+线程，线程对象
+
+线程对象若有属性的话：
+
+多个线程执行多个线程对象，对象内的属性不干扰（全局锁/公共锁）
+
+多个线程执行单个线程对象，对象内的属性公用（对象锁）
+
+多个线程执行单个线程对象，对象内的ThreadLocal属性不干扰（对象锁）
+
+
+线程生命周期：新建、就绪、阻塞、死亡
+阻塞：sleep/await/IO操作/等待获取锁
+线程内的sleep()是可中断阻塞，在阻塞时被请求(锁?)，则会中断线程；
+
+
+Thread.yield()想线程调度器声明本线程重要部分已完成，可以切换CPU给其他线程了；
+
+
+一个类内，两个方法，共用一个lock(conditions)
+初始化一个类对象，临时创建多个线程对象执行类对象内的方法
+执行器执行线程对象
+
+
+
+Lock
+ReadWriteLock
+Condition
+execute/submit
+Runnable/Callable
+
+
+Lock lock = new ReentrantLock(boolean fair);
+lock.lock();
+lock.unlock();
+“公平锁”：线程依次排队获取锁
+“非公平锁”：在锁可获取时不排队（默认）
+
+
+Condition proCondition = lock.newCondition();
+proCondition.await();
+proCondition.signal();
+condition需要在获取锁的前提下的使用；
+condition线程挂起，只有被唤醒才能继续争抢锁，被唤醒后从await处继续向下执行；
+线程执行某个condition的signal后会继续向下执行，直到此线程放弃锁后，被唤醒的线程与其他等待线程再竞争锁；
+
+
+ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+Lock readLock = lock.readLock();
+Lock writeLock = lock.writeLock();
+
+
+submit(Callable)
+Future<Integer> future = executor.submit(callable);
+future.get();
+Callable中的call方法有返回值，通过submit返回的future可获取Callable执行后的返回值；
+若call方法内抛出异常，则此异常被future持有，可通过try future获取该异常信息；
+call方法执行完毕或者抛出异常，future都可以立即获取到信息；
+
+
+
+花式用法:：
+Semaphere：控制资源被同时访问的线程个数 [线程对象内]
+Semaphore semp = new Semaphore(5);  //只能5个线程同时访问
+semp.acquire();
+semp.release();
+
+CyclicBarrier：一组线程互相等待，直到到达某个公共屏障点 [线程对象内]
+CyclicBarrier barrier = new CyclicBarrier(3);  //若只加入2个线程，将永远等待下去
+barrier.await();  //当await的线程达到3个，则继续向下执行
+
+CountDownLatch：一个线程，等待另外N个线程完成某个事情之后再继续执行
+CountDownLatch latch = new CountDownLatch(10);
+latch.await(); //主线程等待
+latch.countDown();  //子线程完毕，计数器减一
+
+
+
+静态资源与Clazz共用Synchronized锁
+（静态资源与所在的Class对象相关联，所以调用静态资源时Class被JVM加载）
