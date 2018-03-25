@@ -6,8 +6,8 @@ package thread.deadLockCase;
 public class DeadLockTest {
 
     public static void main(String[] args) {
-        ObjA a = new ObjA();
-        ObjB b = new ObjB();
+        final ObjA a = new ObjA();
+        final ObjB b = new ObjB();
         Thread t1 = new Thread(new Runnable() {
             @Override
             public void run() {
