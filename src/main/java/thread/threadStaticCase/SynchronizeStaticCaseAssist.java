@@ -5,7 +5,7 @@ package thread.threadStaticCase;
  */
 public class SynchronizeStaticCaseAssist {
 
-     static {
+    static {
         System.out.println("this is SynchronizeStaticCaseAssist's static block");
     }
 

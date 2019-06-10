@@ -32,16 +32,13 @@ public class SynchronizeStaticCase {
                 }
             }
         };
-        Runnable r2 = new Runnable() {
-            @Override
-            public void run() {
-                System.out.println("in thread2");
-                SynchronizeStaticCaseAssist.doTest();
-            }
+        Runnable r2 = ()->{
+            System.out.println("in thread2");
+            SynchronizeStaticCaseAssist.doTest();
         };
 
         executor.execute(r1);
-        Thread.sleep(500);
+        Thread.sleep(1);
         executor.execute(r2);
 
         executor.shutdown();
